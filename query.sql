@@ -69,7 +69,7 @@ CREATE TABLE absensi(
     siswa VARCHAR(255) NOT NULL,
     foto MEDIUMBLOB,
     status ENUM('Diproses', 'Masuk', 'Ditolak'),
-    FOREIGN KEY (siswa) REFERENCES siswa(nis);
+    FOREIGN KEY (siswa) REFERENCES siswa(nis)
 )
 
 CREATE TABLE izin(
@@ -79,9 +79,9 @@ CREATE TABLE izin(
     siswa VARCHAR(255) NOT NULL,
     foto MEDIUMBLOB,
     deskripsi VARCHAR(255) NOT NULL,
-    izinstatus ENUM('Izin', 'Sakit')
+    izinstatus ENUM('Izin', 'Sakit'),
     status ENUM('Diproses', 'Diterima', 'Ditolak'),
-    FOREIGN KEY (siswa) REFERENCES siswa(nis);
+    FOREIGN KEY (siswa) REFERENCES siswa(nis)
 )
 
 CREATE TABLE kehadiran(
@@ -92,8 +92,8 @@ CREATE TABLE kehadiran(
     guru VARCHAR(255) NOT NULL,
     foto MEDIUMBLOB,
     status ENUM('Masuk', 'Telat', 'Izin', 'Sakit', 'Alpha') NOT NULL DEFAULT 'Alpha',
-    FOREIGN KEY (siswa) REFERENCES siswa(nis);
-    FOREIGN KEY (guru) REFERENCES guru(nik);
+    FOREIGN KEY (siswa) REFERENCES siswa(nis),
+    FOREIGN KEY (guru) REFERENCES guru(nik)
 )
 
 CREATE TABLE jadwalharian(
@@ -106,7 +106,7 @@ CREATE TABLE jadwalharian(
         'Jumat', 
         'Sabtu', 
         'Minggu') NOT NULL,
-    libur BOOLEAN DEFAULT 'FALSE',
+    libur BOOLEAN DEFAULT FALSE,
     bataswaktumasuk TIME NOT NULL,
     kelasterlibat ENUM(
         'Semua Kelas',
@@ -136,7 +136,7 @@ CREATE TABLE jadwalkegiatan(
     nama VARCHAR(255) NOT NULL,
     tanggal_mulai DATE NOT NULL,
     tanggal_akhir DATE NOT NULL,
-    libur BOOLEAN DEFAULT 'FALSE',
+    libur BOOLEAN DEFAULT FALSE,
     bataswaktumasuk TIME NOT NULL,
     deskripsi VARCHAR(255) NOT NULL
 )

@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['user'])) {
-    header("Location: ./auth/login.php");
+    header("Location: /pkwh_admin/auth/login.php");
     exit;
 }
 require_once "db.php";

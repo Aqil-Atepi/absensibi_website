@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['user'])) {
-    header("Location: ./auth/login.php");
+    header("Location: /pkwh_admin/auth/login.php");
     exit;
 }
 require_once "db.php";
@@ -67,9 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <div class="container">
   <div class="sidebar">
-    <a href="./dashboard.php"><img src="./assets/icons/dashboard.png" width="28"></a>
-    <a href="./manage_jadwal.php"><img src="./assets/icons/jadwal.png" width="28"></a>
-    <a href="./manage_guru.php" class="active"><img src="./assets/icons/users.png" width="28"></a>
+    <a href="/pkwh_admin/dashboard.php"><img src="/pkwh_admin/assets/icons/dashboard.png" width="28"></a>
+    <a href="/pkwh_admin/manage_jadwal.php"><img src="/pkwh_admin/assets/icons/jadwal.png" width="28"></a>
+    <a href="/pkwh_admin/manage_guru.php" class="active"><img src="/pkwh_admin/assets/icons/users.png" width="28"></a>
   </div>
 
   <div class="main">

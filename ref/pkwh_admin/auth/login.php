@@ -1,7 +1,7 @@
 <?php
 // auth/login.php
 session_start();
-require_once '../db.php';
+require_once __DIR__ . '/../db.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'nama' => $admin['nama'],
             'username' => $admin['username']
         ];
-        header('Location: ./dashboard.php');
+        header('Location: /pkwh_admin/dashboard.php');
         exit;
     } else {
         $error = "User / Password salah";

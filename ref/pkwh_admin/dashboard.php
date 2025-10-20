@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['user'])) {
-    header('Location: ./auth/login.php');
+    header('Location: /pkwh_admin/auth/login.php');
     exit;
 }
 require_once 'db.php';
@@ -146,14 +146,14 @@ $guruAttendance = $stmt->fetchAll();
 <div class="container">
   <!-- Sidebar -->
   <div class="sidebar">
-    <a href="./dashboard.php" class="<?=basename($_SERVER['PHP_SELF'])=='dashboard.php'?'active':''?>">
-      <img src="./assets/icons/dashboard.png" alt="Dashboard" width="28">
+    <a href="/pkwh_admin/dashboard.php" class="<?=basename($_SERVER['PHP_SELF'])=='dashboard.php'?'active':''?>">
+      <img src="/pkwh_admin/assets/icons/dashboard.png" alt="Dashboard" width="28">
     </a>
-    <a href="./manage_jadwal.php" class="<?=basename($_SERVER['PHP_SELF'])=='manage_jadwal.php'?'active':''?>">
-      <img src="./assets/icons/jadwal.png" alt="Jadwal" width="28">
+    <a href="/pkwh_admin/manage_jadwal.php" class="<?=basename($_SERVER['PHP_SELF'])=='manage_jadwal.php'?'active':''?>">
+      <img src="/pkwh_admin/assets/icons/jadwal.png" alt="Jadwal" width="28">
     </a>
-    <a href="./manage_guru.php" class="<?=basename($_SERVER['PHP_SELF'])=='manage_guru.php'?'active':''?>">
-      <img src="./assets/icons/users.png" alt="Guru" width="28">
+    <a href="/pkwh_admin/manage_guru.php" class="<?=basename($_SERVER['PHP_SELF'])=='manage_guru.php'?'active':''?>">
+      <img src="/pkwh_admin/assets/icons/users.png" alt="Guru" width="28">
     </a>
   </div>
 
@@ -163,7 +163,7 @@ $guruAttendance = $stmt->fetchAll();
 
     <!-- FRONTEND-ONLY Camera Toggle Button -->
     <button class="camera-toggle off" id="cameraSwitch">
-      <img src="./assets/icons/camera.png" alt="Camera" width="28" class="camera-icon">
+      <img src="/pkwh_admin/assets/icons/camera.png" alt="Camera" width="28" class="camera-icon">
       <span>Camera: Off</span>
     </button>
 
