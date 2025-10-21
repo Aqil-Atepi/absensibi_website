@@ -1,7 +1,6 @@
 <?php
-include 'conn.php'; // your database connection
+include 'conn.php';
 
-// Fetch all users
 $result = $conn->query("SELECT username, password FROM guru");
 
 while ($row = $result->fetch_assoc()) {
