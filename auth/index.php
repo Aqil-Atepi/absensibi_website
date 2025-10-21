@@ -1,33 +1,58 @@
 <?php
-session_start();
-include "../conn.php";
+    require_once '../conn.php';
+    session_start();
 
-$error = "";
+    function redirect($targeturl) {
+        header('Location: ' . $targeturl);
+        exit;
+    }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nik = mysqli_real_escape_string($conn, $_POST['nik']);
+    function cekuser($target, $username, $password) {
+        $stmt = $conn->prepare('SELECT * FROM ? WHERE username=?');
+        $stmt->bind_param("ss", $target, $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+
+        if ($user && password_verify($password, $user['password'])) {
+            return $user;
+        }
+        else {
+            return false;
+        }
+    }
+
+    $error = '';
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        redirect('../');
+    }
+    
+    $requestauth = $_POST['requestauth'];
+
+    if ($requestauth !== 'login') {
+        redirect('../');
+    }
+
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
     $password = mysqli_real_escape_string($conn, $_POST['password']);
 
-    if (!empty($nik) && !empty($password)) {
-        $sql = "SELECT * FROM guru WHERE nik='$nik' AND password='$password'";
-        $result = mysqli_query($conn, $sql);
-
-        if ($result && mysqli_num_rows($result) > 0) {
-            $row = mysqli_fetch_assoc($result);
-
-            $_SESSION['id']   = $row['id'];
-            $_SESSION['nama'] = $row['nama'];
-            $_SESSION['role'] = $row['role'];
-
-            header("Location: index.php");
-            exit;
-        } else {
-            $error = "❌ NIK atau Password salah!";
-        }
-    } else {
-        $error = "⚠️ Harap isi semua field!";
+    if (empty($username) || empty($password)) {
+        $error = 'Tolong isi semua field yang tersedia ⚠️';
     }
-}
+
+    $guru = cekuser('guru', $username);
+    $admin = cekuser('administratif', $username);
+
+    if ($guru) {
+        $_SESSION['username'] = $username;
+    }
+
+    if ($admin) {
+        $_SESSION['username'] = $username;
+    }
+
+    $error = 'Username atau Password salah! ⛔';
 ?>
 
 <!DOCTYPE html>
@@ -47,8 +72,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="login-box">
         <h2>Login Guru</h2>
-        <form method="POST" action="">
-            <input type="text" name="nik" placeholder="Masukkan NIK" required><br>
+        <form method="POST">
+            <input type="text" name="username" placeholder="Masukkan Username" required><br>
             <input type="password" name="password" placeholder="Masukkan Password" required><br>
             <button type="submit">Login</button>
         </form>
