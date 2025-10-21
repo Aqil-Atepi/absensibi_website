@@ -24,35 +24,33 @@
 
     $error = '';
 
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        redirect('../');
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $requestauth = $_POST['requestauth'];
+
+        if ($requestauth !== 'login') {
+            redirect('../');
+        }
+
+        $username = mysqli_real_escape_string($conn, $_POST['username']);
+        $password = mysqli_real_escape_string($conn, $_POST['password']);
+
+        if (empty($username) || empty($password)) {
+            $error = 'Tolong isi semua field yang tersedia ⚠️';
+        }
+
+        $guru = cekuser('guru', $username);
+        $admin = cekuser('administratif', $username);
+
+        if ($guru) {
+            $_SESSION['username'] = $username;
+        }
+
+        if ($admin) {
+            $_SESSION['username'] = $username;
+        }
+
+        $error = 'Username atau Password salah! ⛔';
     }
-    
-    $requestauth = $_POST['requestauth'];
-
-    if ($requestauth !== 'login') {
-        redirect('../');
-    }
-
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $password = mysqli_real_escape_string($conn, $_POST['password']);
-
-    if (empty($username) || empty($password)) {
-        $error = 'Tolong isi semua field yang tersedia ⚠️';
-    }
-
-    $guru = cekuser('guru', $username);
-    $admin = cekuser('administratif', $username);
-
-    if ($guru) {
-        $_SESSION['username'] = $username;
-    }
-
-    if ($admin) {
-        $_SESSION['username'] = $username;
-    }
-
-    $error = 'Username atau Password salah! ⛔';
 ?>
 
 <!DOCTYPE html>
