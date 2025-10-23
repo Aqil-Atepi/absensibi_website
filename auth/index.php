@@ -143,6 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   <div class="container">
     <div class="left"></div>
     <div class="right">
+      <img src="../assets/images/logo_bi.png" style="width: 100px; height: 100px; top: 25px; right: 25px; position: absolute;">
       <h2>ABSENBI</h2>
       <?php if ($error): ?>
         <div class="error"><?= htmlspecialchars($error) ?></div>
