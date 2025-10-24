@@ -1,4 +1,4 @@
-<?php include 'config.php'; ?>
+<?php include '../../conn.php'; ?>
 <!DOCTYPE html>
 <html>
 <head>
