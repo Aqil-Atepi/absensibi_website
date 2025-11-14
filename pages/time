@@ -1,0 +1,61 @@
+<?php
+function getEvent($conn, $tanggal)
+{
+    $stmt = $conn->prepare("SELECT * FROM event WHERE tanggalmulai <= ? AND tanggalselesai >= ?");
+    $stmt->bind_param("ss", $tanggal, $tanggal);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $data = $result->fetch_assoc();
+    return $data ? $data : '-';
+}
+
+function getJadwal($conn, $hari)
+{
+    $stmt = $conn->prepare("SELECT * FROM jadwal WHERE hari=?");
+    $stmt->bind_param("s", $hari);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $data = $result->fetch_assoc();
+    return $data;
+}
+
+date_default_timezone_set('Asia/Jakarta');
+
+$tanggal = date('Y-m-d');
+$day = date('l');
+
+$idnhari = [
+    'Sunday' => 'Minggu',
+    'Monday' => 'Senin',
+    'Tuesday' => 'Selasa',
+    'Wednesday' => 'Rabu',
+    'Thursday' => 'Kamis',
+    'Friday' => 'Jumat',
+    'Saturday' => 'Sabtu'
+];
+
+$waktusekarang = date('H:i:s');
+$event = getEvent($conn, $tanggal);
+$hari = getJadwal($conn, $idnhari[$day]);
+
+if ($event == '-') {
+    $bataswaktu = $hari['waktu'];
+} elseif (empty($event['waktu'])) {
+    $bataswaktu = 'Libur';
+} else {
+    $bataswaktu = $event['waktu'];
+}
+
+if ($bataswaktu !== 'Libur') {
+    if ($waktusekarang > $bataswaktu) {
+        $statuswaktu = 'telat';
+        $statusText = '-- Telat --';
+    } else {
+        $statuswaktu = 'masuk';
+        $statusText = '-- Tepat Waktu --';
+    }
+} else {
+    $statuswaktu = '';
+    $statusText = '-- Libur --';
+}
+?>

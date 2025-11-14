@@ -1,0 +1,56 @@
+<?php
+session_start();
+
+if (isset($_SESSION["username"])) {
+    require_once "../../conn.php";
+    ?>
+
+
+    <?php
+} else {
+    header("Location: ../../");
+}
+?>
+
+----------------------------------------------------------------------
+
+<?php
+session_start();
+
+if (isset($_SESSION["username"])) {
+    require_once "../../conn.php";
+
+    $username = $_SESSION["username"];
+
+    function getCount($conn, $table)
+    {
+        $accesstable = ['siswa', 'guru', 'kelas'];
+
+        if (!in_array($table, $accesstable)) {
+            throw new Exception("Invalid table name");
+        }
+
+        $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM $table");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $total = $result->fetch_assoc();
+        return $total['total'];
+    }
+
+    function getEvent($conn)
+    {
+        $stmt = $conn->prepare("SELECT * FROM eventsekolah");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+        return $data;
+    }
+
+    ?>
+
+
+    <?php
+} else {
+    header("Location: ../../");
+}
+?>

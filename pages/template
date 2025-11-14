@@ -1,0 +1,40 @@
+<?php
+session_start();
+
+if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === '') {
+    require_once "../../conn.php";
+
+    ?>
+
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="../../assets/styles/main.css" rel="stylesheet">
+        <link href="../../assets/images/logo-bi.png" rel="icon">
+        <title></title>
+        <style>
+        </style>
+    </head>
+
+    <body>
+        <?php
+        include "sidebar.php";
+        ?>
+
+        <div class="container">
+            <div class="title">
+                <h1></h1>
+            </div>
+        </div>
+    </body>
+
+    </html>
+
+    <?php
+} else {
+    header("Location: ../../");
+}
+?>
