@@ -232,8 +232,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['role']) && $_SESSION['role'] === 
         </div>
 
         <script>
-            const fileInput = document.getElementById("file-input");
-            const fileButton = document.getElementById("file-button");
             const viewLink = document.getElementById("view-foto-link");
             const viewLabel = document.getElementById("view-foto-label");
             const base64 = viewLink.dataset.foto;

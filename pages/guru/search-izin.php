@@ -6,35 +6,34 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && in_array($_SESSION["ro
     date_default_timezone_set('Asia/Jakarta');
 
     $tanggal = date('Y-m-d');
-    $search  = isset($_GET['search']) ? "%{$_GET['search']}%" : "%";
-    $kelas   = isset($_GET['filtersummary']) ? $_GET['filtersummary'] : '';
+    $search = isset($_GET['search']) ? "%{$_GET['search']}%" : "%";
+    $kelas = isset($_GET['filtersummary']) ? $_GET['filtersummary'] : '';
 
-    // Build query dynamically
+    // Query base
+    $sql = "
+        SELECT a.*, s.nama AS nama_siswa, s.kelas AS id_kelas, k.nama AS nama_kelas
+        FROM izin a
+        JOIN siswa s ON a.siswa = s.nis
+        JOIN kelas k ON s.kelas = k.id
+        WHERE a.status = 'Diproses'
+          AND s.nama LIKE ?
+          AND a.tanggal = ?
+    ";
+
+    // Add kelas filter only if user selected a class
+    if ($kelas !== '') {
+        $sql .= " AND s.kelas = ? ";
+    }
+
+    $stmt = $conn->prepare($sql);
+
+    // Bind parameters
     if ($kelas === '') {
-        $stmt = $conn->prepare("
-            SELECT i.*, s.nama AS nama_siswa, s.kelas AS id_kelas, k.nama AS nama_kelas
-            FROM izin i
-            JOIN siswa s ON i.siswa = s.nis
-            JOIN kelas k ON s.kelas = k.id
-            WHERE i.tanggal = ?
-              AND i.status = 'Diproses'
-              AND s.nama LIKE ?
-            ORDER BY i.waktu ASC
-        ");
-        $stmt->bind_param("ss", $tanggal, $search);
+        // No kelas filter
+        $stmt->bind_param("ss", $search, $tanggal);
     } else {
-        $stmt = $conn->prepare("
-            SELECT i.*, s.nama AS nama_siswa, s.kelas AS id_kelas, k.nama AS nama_kelas
-            FROM izin i
-            JOIN siswa s ON i.siswa = s.nis
-            JOIN kelas k ON s.kelas = k.id
-            WHERE i.tanggal = ?
-              AND i.status = 'Diproses'
-              AND s.kelas = ?
-              AND s.nama LIKE ?
-            ORDER BY i.waktu ASC
-        ");
-        $stmt->bind_param("sss", $tanggal, $kelas, $search);
+        // With kelas filter
+        $stmt->bind_param("sss", $search, $tanggal, $kelas);
     }
 
     $stmt->execute();
@@ -44,44 +43,33 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && in_array($_SESSION["ro
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-
-            $namaSiswa = htmlspecialchars($row['nama_siswa']);
-            $namaKelas = htmlspecialchars($row['nama_kelas']);
-            $tanggalIzin = htmlspecialchars($row['tanggal']);
-            $waktuIzin = htmlspecialchars($row['waktu']);
-            $alasan = htmlspecialchars($row['alasan']); // <-- from izin table
-            $idIzin = $row['id'];
-
             echo "
-                <tr>
-                    <td class='table-no'>{$no}</td>
-                    <td class='table-nma'>{$namaSiswa}</td>
-                    <td class='table-kls'>{$namaKelas}</td>
-                    <td class='table-tgi'>{$tanggalIzin} {$waktuIzin}</td>
-                    <td class='table-als'>{$alasan}</td>
-                    <td class='table-aks-items'>
-                        <a href='izin-verify.php?id={$idIzin}'>
-                            <button class='verified'><img src='../../assets/svg/edit.svg'></button>
-                        </a>
-                    </td>
-                </tr>
-            ";
-
-            $no++;
-        }
-
-    } else {
-        echo "
             <tr>
-                <td colspan='6' style='text-align:center; padding:10px;'>
-                    <p>Tidak ada data izin.</p>
+                <td class='table-no'>{$no}</td>
+                <td class='table-nma'>" . htmlspecialchars($row['nama_siswa']) . "</td>
+                <td class='table-kls'>" . htmlspecialchars($row['nama_kelas']) . "</td>
+                <td class='table-als'>" . htmlspecialchars($row['alasan']) . "</td>
+                <td class='table-aks-items'>
+                    <a href='#'>
+                        <button class='verified'><img src='../../assets/svg/edit.svg'></button>
+                    </a>
                 </td>
             </tr>
+            ";
+            $no++;
+        }
+    } else {
+        echo "
+        <tr>
+            <td colspan='5' style='text-align:center; padding:10px;'>
+                <p>Tidak ada yang izin.</p>
+            </td>
+        </tr>
         ";
     }
 
 } else {
-    header(\"Location: ../../\");
+    header("Location: ../../");
     exit;
 }
 ?>

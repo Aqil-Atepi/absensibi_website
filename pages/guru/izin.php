@@ -3,37 +3,19 @@ session_start();
 
 if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 'guru') {
     require_once "../../conn.php";
-    date_default_timezone_set('Asia/Jakarta');
 
-    $tanggal = date('Y-m-d');
+    date_default_timezone_set('Asia/Jakarta');
     $currentkelas = $_GET['filtersummary'] ?? '';
 
-    function getIzin($conn, $tanggal, $kelas, $limit, $offset)
+    function getDataIzin($conn, $limit, $offset)
     {
-        if ($kelas == '') {
-            $stmt = $conn->prepare("
-                SELECT * FROM izin 
-                WHERE tanggal = ? 
-                AND status = 'Diproses' 
-                ORDER BY tanggal ASC 
-                LIMIT ? OFFSET ?
-            ");
-            $stmt->bind_param("sii", $tanggal, $limit, $offset);
-        } else {
-            $stmt = $conn->prepare("
-                SELECT * FROM izin 
-                WHERE tanggal = ? 
-                AND kelas = ? 
-                AND status = 'Diproses' 
-                ORDER BY tanggal ASC 
-                LIMIT ? OFFSET ?
-            ");
-            $stmt->bind_param("ssii", $tanggal, $kelas, $limit, $offset);
-        }
-
+        $stmt = $conn->prepare("SELECT * FROM izin WHERE status='Diproses' 
+                LIMIT ? OFFSET ?");
+        $stmt->bind_param('ii', $limit, $offset);
         $stmt->execute();
         $result = $stmt->get_result();
-        return $result->fetch_all(MYSQLI_ASSOC);
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+        return $data;
     }
 
     function getNamaSiswa($conn, $nis)
@@ -50,7 +32,7 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
         $stmt->bind_param("i", $kelas);
         $stmt->execute();
         $data = $stmt->get_result()->fetch_assoc();
-        return $data['nama'];
+        return $data['nama'] ?? '-';
     }
 
     function getDataKelas($conn)
@@ -65,19 +47,18 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
     $offset = ($page - 1) * $limit;
 
     if ($currentkelas == '') {
-        $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM izin WHERE tanggal = ? AND status = 'Diproses'");
-        $stmt->bind_param("s", $tanggal);
+        $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM izin WHERE status = 'Diproses'");
     } else {
-        $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM izin WHERE tanggal = ? AND kelas = ? AND status = 'Diproses'");
-        $stmt->bind_param("ss", $tanggal, $currentkelas);
+        $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM izin WHERE kelas = ? AND status = 'Diproses'");
+        $stmt->bind_param("s", $currentkelas);
     }
     $stmt->execute();
     $totalRows = $stmt->get_result()->fetch_assoc()['total'];
     $totalPages = ceil($totalRows / $limit);
 
-    $izin = getIzin($conn, $tanggal, $currentkelas, $limit, $offset);
-    ?>
+    $dataizin = getDataIzin($conn, $limit, $offset);
 
+    ?>
 
     <!DOCTYPE html>
     <html lang="en">
@@ -184,14 +165,10 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
             }
 
             .table-nma {
-                width: 400px;
+                width: 600px;
             }
 
             .table-kls {
-                width: 200px;
-            }
-
-            .table-tgi {
                 width: 200px;
             }
 
@@ -300,7 +277,6 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
                                 <td class="table-no">No</td>
                                 <td class="table-nma">Nama Siswa</td>
                                 <td class="table-kls">Kelas</td>
-                                <td class="table-tgi">Tanggal Izin</td>
                                 <td class="table-als">Alasan</td>
                                 <td class="table-aks">Aksi</td>
                             </tr>
@@ -309,21 +285,20 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
                         <tbody>
                             <?php
                             $no = $offset + 1;
-                            if (empty($izin)) {
-                                echo "<tr><td colspan='6' style='text-align:center;padding:10px;'>Tidak ada yang izin.</td></tr>";
+                            if (empty($dataizin)) {
+                                echo "<tr><td colspan='5' style='text-align:center;padding:10px;'>Tidak ada yang izin.</td></tr>";
                             } else {
-                                foreach ($izin as $absen) {
-                                    $siswa = getNamaSiswa($conn, $absen['siswa']);
-                                    $kelas = getNamaKelas($conn, $absen['kelas']);
+                                foreach ($dataizin as $izin) {
+                                    $siswa = getNamaSiswa($conn, $izin['siswa']);
+                                    $kelas = getNamaKelas($conn, $izin['kelas']);
                                     echo "
                                         <tr>
                                             <td class='table-no'>{$no}</td>
                                             <td class='table-nma'>{$siswa}</td>
                                             <td class='table-kls'>{$kelas}</td>
-                                            <td class='table-tgi'>{$absen['waktu']}</td>
-                                            <td class='table-als'>Alasan</td>
+                                            <td class='table-wkt'>{$izin['alasan']}</td>
                                             <td class='table-aks-items'>
-                                                <a href='absensi-verify.php?idabsen={$absen['id']}'>
+                                                <a href='izin-verify.php?idizin={$izin['id']}'>
                                                     <button class='verified'><img src='../../assets/svg/edit.svg'></button>
                                                 </a>
                                             </td>
@@ -346,6 +321,7 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
                 </div>
             </div>
         </div>
+        </div>
 
         <script>
             const searchBar = document.getElementById('search-bar');
@@ -356,7 +332,7 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
                 const search = searchBar.value.trim();
                 const kelas = filterSelect.value;
 
-                fetch(`search-absen.php?search=${encodeURIComponent(search)}&filtersummary=${encodeURIComponent(kelas)}`)
+                fetch(`search-izin.php?search=${encodeURIComponent(search)}&filtersummary=${encodeURIComponent(kelas)}`)
                     .then(response => response.text())
                     .then(data => {
                         tableBody.innerHTML = data;
@@ -368,7 +344,6 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
             filterSelect.addEventListener('change', updateTable);
 
         </script>
-
     </body>
 
     </html>

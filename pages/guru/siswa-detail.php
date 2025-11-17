@@ -17,7 +17,7 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
         $stmt->bind_param("i", $kelas);
         $stmt->execute();
         $data = $stmt->get_result()->fetch_assoc();
-        return $data["nama"];
+        return $data["nama"] ?? '-';
     }
 
     $kelassiswa = getNamaKelas($conn, $datasiswa["kelas"]);
@@ -261,11 +261,14 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
                                 foreach ($absensi as $absen) {
                                     $tanggal = new DateTime($absen["tanggal"]);
                                     $tanggalabsen = $tanggal->format('j F Y');
+
+                                    $waktu = date('H:i', strtotime($absen['waktu']));
+
                                     echo "
                                         <tr>
                                             <td class='table-no'>{$no}</td>
                                             <td class='table-tgl'>{$tanggalabsen}</td>
-                                            <td class='table-wkt'>{$absen['waktu']}</td>
+                                            <td class='table-wkt'>{$waktu}</td>
                                             <td class='table-abs'>{$absen['absen']}</td>
                                             <td class='table-aks-items'>
                                                 <a href='detail-absensi.php?idabsen={$absen['id']}'>

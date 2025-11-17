@@ -109,12 +109,21 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
 
     function getAbsenSiswa($conn, $tanggal, $absen, $kelas)
     {
-        $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM absensi WHERE  tanggal=? AND absen=? AND kelas=?");
-        $stmt->bind_param("ssi", $tanggal, $absen, $kelas);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $data = $result->fetch_assoc();
-        return $data['total'];
+        if ($kelas == '') {
+            $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM absensi WHERE  tanggal=? AND absen=?");
+            $stmt->bind_param("ss", $tanggal, $absen);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $data = $result->fetch_assoc();
+            return $data['total'];
+        } else {
+            $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM absensi WHERE  tanggal=? AND absen=? AND kelas=?");
+            $stmt->bind_param("ssi", $tanggal, $absen, $kelas);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $data = $result->fetch_assoc();
+            return $data['total'];
+        }
     }
 
     function getDataSiswa($conn, $kelas)

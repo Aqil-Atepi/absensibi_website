@@ -14,39 +14,6 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="../../assets/styles/main.css" rel="stylesheet">
         <link href="../../assets/images/logo-bi.png" rel="icon">
-        <title></title>
-        <style>
-        </style>
-    </head>
-
-    <body>
-        <?php
-        include "sidebar.php";
-        ?>
-
-        <div class="container">
-            <div class="title">
-                <h1></h1>
-            </div>
-        </div>
-    </body>
-
-    </html>
-
-    <?php
-} else {
-    header("Location: ../../");
-}
-?>
-
-<!DOCTYPE html>
-    <html lang="en">
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="../../assets/styles/main.css" rel="stylesheet">
-        <link href="../../assets/images/logo-bi.png" rel="icon">
         <title>Akun</title>
         <style>
             /* GENERAL */
@@ -159,19 +126,23 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
                     <div class="form-container">
                         <div class="form-items single">
                             <label><?= ($table == "siswa") ? 'NIS' : 'NIK' ?></label>
-                            <input type="text" name="nomorinduk" placeholder="Masukkan <?= ($table == "siswa") ? 'NIS' : 'NIK' ?>" value="<?= $akun['nomorinduk'] ?>" readonly>
+                            <input type="text" name="nomorinduk"
+                                placeholder="Masukkan <?= ($table == "siswa") ? 'NIS' : 'NIK' ?>"
+                                value="<?= $akun['nomorinduk'] ?>" readonly>
                         </div>
                     </div>
 
                     <div class="form-container">
                         <div class="form-items">
                             <label>Nama</label>
-                            <input type="text" name="nama" placeholder="Masukkan Nama..." value="<?= $akun['nama'] ?>" required>
+                            <input type="text" name="nama" placeholder="Masukkan Nama..." value="<?= $akun['nama'] ?>"
+                                required>
                         </div>
 
                         <div class="form-items">
                             <label>Username</label>
-                            <input type="text" name="username" placeholder="Masukkan Username..." value="<?= $akun['username'] ?>">
+                            <input type="text" name="username" placeholder="Masukkan Username..."
+                                value="<?= $akun['username'] ?>">
                         </div>
                     </div>
 
@@ -226,7 +197,7 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
                 viewLabel.textContent = "Tidak ada foto";
             }
 
-            fileInput.addEventListener("change", function() {
+            fileInput.addEventListener("change", function () {
                 if (fileInput.files.length > 0) {
                     const file = fileInput.files[0];
                     fileButton.textContent = file.name;
@@ -247,3 +218,9 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
         </script>
 
     </body>
+
+    <?php
+} else {
+    header("Location: ../../");
+}
+?>

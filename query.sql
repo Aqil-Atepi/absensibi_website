@@ -68,7 +68,9 @@ CREATE TABLE izin(
     kelas INT,
     tanggal DATE NOT NULL,
     status ENUM('Diproses', 'Diterima') DEFAULT 'Diproses', 
-    absen ENUM('Sakit', 'Izin') NOT NULL,
+    foto MEDIUMBLOB,
+    alasan ENUM('Sakit', 'Izin') NOT NULL,
+    deskripsi VARCHAR(255) NOT NULL,
     FOREIGN KEY (siswa) REFERENCES siswa(nis),
     FOREIGN KEY (kelas) REFERENCES kelas(id)
 )

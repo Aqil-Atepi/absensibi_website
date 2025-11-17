@@ -50,7 +50,7 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
         $stmt->bind_param("i", $kelas);
         $stmt->execute();
         $data = $stmt->get_result()->fetch_assoc();
-        return $data['nama'];
+        return $data['nama'] ?? '-';
     }
 
     function getDataKelas($conn)
@@ -310,12 +310,15 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
                                 foreach ($absensi as $absen) {
                                     $siswa = getNamaSiswa($conn, $absen['siswa']);
                                     $kelas = getNamaKelas($conn, $absen['kelas']);
+
+                                    $waktu = date('H:i', strtotime($absen['waktu']));
+
                                     echo "
                                         <tr>
                                             <td class='table-no'>{$no}</td>
                                             <td class='table-nma'>{$siswa}</td>
                                             <td class='table-kls'>{$kelas}</td>
-                                            <td class='table-wkt'>{$absen['waktu']}</td>
+                                            <td class='table-wkt'>{$waktu}</td>
                                             <td class='table-aks-items'>
                                                 <a href='absensi-verify.php?idabsen={$absen['id']}'>
                                                     <button class='verified'><img src='../../assets/svg/edit.svg'></button>

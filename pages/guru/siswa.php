@@ -175,19 +175,19 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
             }
 
             .table-nma {
-                width: 450px;
+                width: 400px;
             }
 
             .table-fto {
-                width: 150px;
+                width: 225px;
             }
 
             .table-kls {
-                width: 150px;
+                width: 225px;
             }
 
             .table-aks {
-                width: 250px;
+                width: 150px;
             }
 
             .table-aks-items {
@@ -285,7 +285,7 @@ if (isset($_SESSION["id"]) && isset($_SESSION["role"]) && $_SESSION["role"] === 
                         <thead>
                             <tr>
                                 <td class="table-no">No</td>
-                                <td class="table-nis">Nis</td>
+                                <td class="table-nis">NIS</td>
                                 <td class="table-nma">Nama Siswa</td>
                                 <td class="table-kls">Kelas</td>
                                 <td class="table-fto">Foto</td>

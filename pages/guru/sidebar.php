@@ -115,11 +115,6 @@
                 <img src="../../assets/svg/mail.svg" alt="Jadwal Icon">
                 <span>Izin</span>
             </a>
-
-            <a href="profile.php" class="<?= basename($_SERVER['PHP_SELF']) == 'profile.php' ? 'active' : '' ?>">
-                <img src="../../assets/svg/profile.svg" alt="Kelas Icon">
-                <span>Profile</span>
-            </a>
         </div>
 
         <div class="logout">
