@@ -199,12 +199,14 @@ if (isset($_SESSION['id']) && isset($_SESSION['role']) && $_SESSION['role'] === 
                     <div class="form-container">
                         <div class="form-items">
                             <label><?= ($table == "siswa") ? 'NIS' : 'NIK' ?></label>
-                            <input type="text" name="nomorinduk" placeholder="Masukkan NIS..." required>
+                            <input type="text" name="nomorinduk" placeholder="Masukkan NIS..." required
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
                         </div>
 
                         <div class="form-items">
                             <label>Nama</label>
-                            <input type="text" name="nama" placeholder="Masukkan Nama..." required>
+                            <input type="text" name="nama" placeholder="Masukkan Nama..." required
+                                oninput="this.value = this.value.replace(/[^a-zA-Z .,]/g, '')">
                         </div>
                     </div>
 
@@ -224,7 +226,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['role']) && $_SESSION['role'] === 
                         <div class="form-items">
                             <label>Foto</label>
                             <div>
-                                <input type="file"  id="file-input" name="foto" accept="image/*">
+                                <input type="file" id="file-input" name="foto" accept="image/*">
                                 <label for="file-input" id="file-button">Pilih Foto</label>
                             </div>
 
